@@ -1,0 +1,21 @@
+{
+  "short_name": "API Guard",
+  "name": "API Guard Dashboard",
+  "icons": [
+    {
+      "src": "/assets/favicons/favicon.svg",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/assets/logos/Logo-APIguard.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#0A0F1C",
+  "background_color": "#0A0F1C"
+}

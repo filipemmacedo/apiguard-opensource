@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap");
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+a,
+[role="button"] {
+  cursor: pointer;
+}
+
+html,
+body,
+#app {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #111827;
+  font-family: var(--font-sans);
+  background-color: #F8F9FA;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.usage-trend-chart .recharts-surface,
+.usage-trend-chart .recharts-surface:focus,
+.usage-trend-chart .recharts-surface:focus-visible,
+.usage-trend-chart .recharts-surface *:focus,
+.usage-trend-chart .recharts-surface *:focus-visible {
+  outline: none !important;
+}

@@ -1,0 +1,27 @@
+node_modules/
+.env
+.env.compose
+.cache/
+usage.db
+usage.db-shm
+usage.db-wal
+package-lock.json
+/test-results/
+playwright-report/
+
+# Dashboard (TanStack Start)
+dashboard/node_modules/
+dashboard/dist/
+dashboard/dist-ssr/
+dashboard/*.local
+dashboard/.env
+dashboard/.nitro/
+dashboard/.tanstack/
+dashboard/.wrangler/
+dashboard/.output/
+dashboard/.vinxi/
+dashboard/__unconfig*
+dashboard/todos.json
+
+# OS files
+.DS_Store

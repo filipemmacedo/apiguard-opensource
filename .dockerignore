@@ -1,0 +1,14 @@
+.git
+.codex
+.cache
+.claude
+openspec
+dashboard
+admin
+usage.db
+usage.db-shm
+usage.db-wal
+.env
+.env.compose
+node_modules
+package-lock.json

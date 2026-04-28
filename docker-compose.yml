@@ -1,0 +1,66 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-apiguard}
+      POSTGRES_USER: ${POSTGRES_USER:-apiguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-apiguard}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-apiguard} -d ${POSTGRES_DB:-apiguard}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+      start_period: 5s
+    networks:
+      - apiguard
+
+  api-guard:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      LISTEN_ADDR: ${LISTEN_ADDR:-:8080}
+      UPSTREAM_TIMEOUT: ${UPSTREAM_TIMEOUT:-30s}
+      ENABLE_TEST_INTERFACE: ${ENABLE_TEST_INTERFACE:-false}
+      DATABASE_DSN: ${DATABASE_DSN:-postgres://apiguard:apiguard@postgres:5432/apiguard?sslmode=disable}
+      DATABASE_DRIVER: ${DATABASE_DRIVER:-postgres}
+      SECRET_MASTER_KEY: ${SECRET_MASTER_KEY:-}
+      SECRET_KEY_VERSION: ${SECRET_KEY_VERSION:-v1}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com}
+      ENABLE_LEGACY_FALLBACK: ${ENABLE_LEGACY_FALLBACK:-true}
+      UPSTREAM_BASE_URL: ${UPSTREAM_BASE_URL:-}
+      UPSTREAM_API_KEY: ${UPSTREAM_API_KEY:-}
+      TENANT_API_KEYS: ${TENANT_API_KEYS:-}
+    ports:
+      - "8080:8080"
+    networks:
+      - apiguard
+
+  dashboard:
+    build:
+      context: dashboard
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      api-guard:
+        condition: service_started
+    environment:
+      API_PROXY_TARGET: http://api-guard:8080
+    ports:
+      - "3000:3000"
+    networks:
+      - apiguard
+
+volumes:
+  postgres-data:
+
+networks:
+  apiguard:
+    name: apiguard
