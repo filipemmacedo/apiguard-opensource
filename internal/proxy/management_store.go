@@ -1,7 +1,9 @@
 package proxy
 
 import (
+	"crypto/rand"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -426,6 +428,11 @@ CREATE TABLE IF NOT EXISTS user_quarantine (
 );
 CREATE INDEX IF NOT EXISTS idx_user_quarantine_user_active
   ON user_quarantine(user_id, unlocked_at, expires_at);
+
+CREATE TABLE IF NOT EXISTS server_config (
+  key TEXT NOT NULL PRIMARY KEY,
+  value TEXT NOT NULL
+);
 `
 	if dialect == sqlDialectSQLite {
 		schema = strings.ReplaceAll(schema, "BIGSERIAL PRIMARY KEY", "INTEGER PRIMARY KEY AUTOINCREMENT")
@@ -1610,5 +1617,36 @@ func scanUserQuarantineRecord(scanner interface{ Scan(dest ...any) error }) (use
 		record.UnlockedBy = unlockedBy.String
 	}
 	return record, nil
+}
+
+// getOrCreateMasterKey returns the stored master encryption key, generating and
+// persisting a new one if none exists. This allows zero-config startup when
+// SECRET_MASTER_KEY is not provided via environment variable.
+func (s *managementStore) getOrCreateMasterKey() (string, error) {
+	rows, err := s.sql.query(`SELECT value FROM server_config WHERE key = 'master_key'`)
+	if err != nil {
+		return "", fmt.Errorf("load master key: %w", err)
+	}
+	defer rows.Close()
+	if rows.Next() {
+		var key string
+		if err := rows.Scan(&key); err != nil {
+			return "", fmt.Errorf("scan master key: %w", err)
+		}
+		return key, nil
+	}
+	if err := rows.Err(); err != nil {
+		return "", fmt.Errorf("iterate master key: %w", err)
+	}
+
+	buf := make([]byte, 32)
+	if _, err := rand.Read(buf); err != nil {
+		return "", fmt.Errorf("generate master key: %w", err)
+	}
+	key := hex.EncodeToString(buf)
+	if _, err := s.sql.exec(`INSERT INTO server_config (key, value) VALUES ('master_key', ?)`, key); err != nil {
+		return "", fmt.Errorf("persist master key: %w", err)
+	}
+	return key, nil
 }
 

@@ -151,6 +151,17 @@ func NewServer(cfg config.Config, logger *slog.Logger) *Server {
 		panic(err)
 	}
 	client := &http.Client{Timeout: cfg.UpstreamTimeout}
+	if strings.TrimSpace(cfg.SecretMasterKey) == "" {
+		key, err := management.getOrCreateMasterKey()
+		if err != nil {
+			_ = storage.close()
+			logger.Error("failed to initialize master key", "error", err)
+			panic(err)
+		}
+		cfg.SecretMasterKey = key
+		logger.Info("using auto-generated master key stored in database (set SECRET_MASTER_KEY env var to use your own)")
+	}
+
 	server := &Server{
 		cfg:               cfg,
 		logger:            logger,

@@ -27,10 +27,7 @@ Your App  →  APIGuard  →  OpenAI / Anthropic / Mistral / ...
 git clone https://github.com/your-org/apiguard.git
 cd apiguard
 
-# Copy the example env file and set a master key
 cp .env.compose.example .env.compose
-# Edit .env.compose and set SECRET_MASTER_KEY:
-#   openssl rand -hex 32
 
 docker compose --env-file .env.compose up --build
 ```
