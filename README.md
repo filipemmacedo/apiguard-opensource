@@ -29,10 +29,10 @@ cd apiguard
 
 # Copy the example env file and set a master key
 cp .env.compose.example .env.compose
-# Edit .env.compose and set SECRET_MASTER_KEY to a random hex string:
-# openssl rand -hex 32
+# Edit .env.compose and set SECRET_MASTER_KEY:
+#   openssl rand -hex 32
 
-docker compose up --build
+docker compose --env-file .env.compose up --build
 ```
 
 | Service   | URL                   |
