@@ -468,23 +468,6 @@ export default function APIManagementPanel() {
     <div className="flex flex-col gap-5">
       <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
 
-      {sheetsSyncStatus?.sync_status === "error" && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <span className="font-semibold">Pricing sheet unreachable</span> — model availability and cost rates are using cached data
-          {sheetsSyncStatus.last_synced_at && (
-            <span className="text-amber-600"> (last synced {new Date(sheetsSyncStatus.last_synced_at).toLocaleString()})</span>
-          )}
-          {sheetsSyncStatus.error_message && (
-            <div className="mt-1 text-xs text-amber-700">{sheetsSyncStatus.error_message}</div>
-          )}
-        </div>
-      )}
-      {sheetsSyncStatus?.sync_status === "never" && (
-        <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          <span className="font-semibold">Pricing sheet not yet synced</span> — configure <code className="text-xs">GOOGLE_SERVICE_ACCOUNT_JSON</code> and <code className="text-xs">GOOGLE_SHEET_ID</code> to enable model pricing sync
-        </div>
-      )}
-
       {error && (
         <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
           {error}
