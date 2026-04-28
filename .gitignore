@@ -23,5 +23,10 @@ dashboard/.vinxi/
 dashboard/__unconfig*
 dashboard/todos.json
 
+# AI tooling (local only)
+.claude/
+.codex/
+openspec/
+
 # OS files
 .DS_Store
