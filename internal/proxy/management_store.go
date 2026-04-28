@@ -226,6 +226,9 @@ func (s *managementStore) migrate() error {
 	if err := s.migrateAddModelPricingEUR(); err != nil {
 		return fmt.Errorf("migrate add model_pricing eur columns: %w", err)
 	}
+	if err := s.migrateSetSheetAllowedTrue(); err != nil {
+		return fmt.Errorf("migrate set sheet_allowed true: %w", err)
+	}
 	return nil
 }
 
@@ -272,6 +275,11 @@ CREATE TABLE IF NOT EXISTS sheets_sync_state (
 
 func (s *managementStore) migrateAddSheetAllowed() error {
 	return s.sql.addColumnIfMissing("provider_models", "sheet_allowed", "BOOLEAN NOT NULL DEFAULT FALSE")
+}
+
+func (s *managementStore) migrateSetSheetAllowedTrue() error {
+	_, err := s.sql.exec(`UPDATE provider_models SET sheet_allowed = TRUE WHERE sheet_allowed = FALSE`)
+	return err
 }
 
 func (s *managementStore) migrateAddModelPricingEUR() error {
@@ -876,11 +884,11 @@ WHERE provider_credential_id = ?
 		}
 		if _, execErr := tx.exec(`
 INSERT INTO provider_models (
-  provider_credential_id, provider_type, provider_model_id, display_name, enabled, sync_state, metadata_json, last_synced_at
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  provider_credential_id, provider_type, provider_model_id, display_name, enabled, sync_state, metadata_json, last_synced_at, sheet_allowed
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, TRUE)
 ON CONFLICT(provider_credential_id, provider_model_id)
 DO UPDATE SET display_name = excluded.display_name, enabled = excluded.enabled, sync_state = excluded.sync_state,
-              metadata_json = excluded.metadata_json, last_synced_at = excluded.last_synced_at
+              metadata_json = excluded.metadata_json, last_synced_at = excluded.last_synced_at, sheet_allowed = TRUE
 `,
 			providerCredentialID,
 			providerType,

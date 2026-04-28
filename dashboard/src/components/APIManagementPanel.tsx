@@ -343,7 +343,7 @@ export default function APIManagementPanel() {
 
   function toggleAllCatalogModels(providerID: number) {
     const models = allProviderModels[providerID] ?? [];
-    const eligibleModels = models.filter((m) => m.sync_state === "synced" && m.sheet_allowed);
+    const eligibleModels = models.filter((m) => m.sync_state === "synced");
     const currentEnabled = catalogEnabledModelIDs[providerID] ?? [];
     const allEnabled = eligibleModels.every((m) =>
       currentEnabled.includes(m.provider_model_id),
@@ -953,7 +953,7 @@ export default function APIManagementPanel() {
                     const enabledIDs =
                       catalogEnabledModelIDs[provider.id] ?? [];
                     const eligibleModels = models.filter(
-                      (m) => m.sync_state === "synced" && m.sheet_allowed,
+                      (m) => m.sync_state === "synced",
                     );
                     const allEnabled =
                       eligibleModels.length > 0 &&
@@ -963,7 +963,6 @@ export default function APIManagementPanel() {
                     const enabledEligibleCount = eligibleModels.filter((m) =>
                       enabledIDs.includes(m.provider_model_id),
                     ).length;
-                    const sheetLastFetched = models.find((m) => m.sheet_last_fetched_at)?.sheet_last_fetched_at;
                     const isExpanded = expandedProviders.has(provider.id);
 
                     return (
@@ -1000,11 +999,6 @@ export default function APIManagementPanel() {
                             <span className="rounded-full bg-[#E5E7EB] px-2 py-0.5 text-[10px] font-medium text-[#6B7280]">
                               {enabledEligibleCount}/{eligibleModels.length} models
                             </span>
-                            {sheetLastFetched && (
-                              <span className="text-[10px] text-[#9CA3AF]">
-                                Sheet fetched {new Date(sheetLastFetched).toLocaleString()}
-                              </span>
-                            )}
                           </button>
                           <div className="flex items-center gap-3">
                             {/* Toggle All */}
@@ -1054,24 +1048,17 @@ export default function APIManagementPanel() {
                               </p>
                             ) : (
                               models.map((model) => {
-                                const isEligible = model.sync_state === "synced" && model.sheet_allowed;
-                                const blockedBySheet = !model.sheet_allowed;
+                                const isEligible = model.sync_state === "synced";
                                 return (
                                   <div
                                     key={model.id}
-                                    className={`flex items-center justify-between px-4 py-2.5 hover:bg-[#F9FAFB] ${blockedBySheet ? "opacity-70" : ""}`}
-                                    title={blockedBySheet ? "This model is not listed in the pricing sheet" : undefined}
+                                    className="flex items-center justify-between px-4 py-2.5 hover:bg-[#F9FAFB]"
                                   >
                                     <div>
                                       <div className="flex items-center gap-2">
                                         <span className="text-sm font-medium text-[#111827]">
                                           {model.display_name}
                                         </span>
-                                        {blockedBySheet && (
-                                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-medium text-amber-700">
-                                            Not in pricing sheet
-                                          </span>
-                                        )}
                                       </div>
                                       <div className="text-xs text-[#9CA3AF]">
                                         {model.provider_model_id} &middot;{" "}
