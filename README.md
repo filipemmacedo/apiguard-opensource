@@ -94,7 +94,7 @@ TENANT_API_KEYS=alice:key-alice,bob:key-bob
 └─────────────────────────────────────────────────┘
 ```
 
-![alt text](image.png)
+![alt text](image-1.png)
 
 **`api-guard`** (Go) — the proxy core:
 - Authenticates tenant API keys
