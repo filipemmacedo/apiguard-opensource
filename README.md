@@ -84,7 +84,7 @@ TENANT_API_KEYS=alice:key-alice,bob:key-bob
 │                   Docker Compose                │
 │                                                 │
 │  ┌──────────┐    ┌──────────────┐    ┌───────┐  │
-│  │Dashboard │───▶│  api-guard   │───▶│  LLM  │  │
+│  │Dashboard │───▶│  api-guard   │───▶│  LLM │  │
 │  │ :3000    │    │  :8080       │    │ APIs  │  │
 │  └──────────┘    └──────┬───────┘    └───────┘  │
 │                         │                       │
@@ -93,6 +93,8 @@ TENANT_API_KEYS=alice:key-alice,bob:key-bob
 │                  └──────────────┘               │
 └─────────────────────────────────────────────────┘
 ```
+
+![alt text](image.png)
 
 **`api-guard`** (Go) — the proxy core:
 - Authenticates tenant API keys
